@@ -29,11 +29,11 @@ contract Base is Test {
     HikariFeeCollector internal feeCollector;
     MockWLCAI internal wlcai;
 
-    // Default token-creation prices (matches mainnet config)
+    // Default token-creation prices (matches mainnet config: flat 5,000 LCAI).
     uint256 internal constant PRICE_STANDARD = 5000 ether;
-    uint256 internal constant PRICE_MINTABLE = 7500 ether;
-    uint256 internal constant PRICE_BURNABLE = 7500 ether;
-    uint256 internal constant PRICE_TAX = 10_000 ether;
+    uint256 internal constant PRICE_MINTABLE = 5000 ether;
+    uint256 internal constant PRICE_BURNABLE = 5000 ether;
+    uint256 internal constant PRICE_TAX = 5000 ether;
 
     function deployHikari() internal {
         wlcai = new MockWLCAI();
