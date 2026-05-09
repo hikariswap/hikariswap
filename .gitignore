@@ -1,0 +1,19 @@
+# Foundry
+out/
+cache/
+broadcast/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Local tooling
+.claude/
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# OS
+Thumbs.db
