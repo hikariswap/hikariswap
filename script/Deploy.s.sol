@@ -17,8 +17,9 @@ import {HikariLocker} from "../src/locker/HikariLocker.sol";
 ///         For mainnet, WLCAI defaults to the canonical Lightchain address; on
 ///         testnet, WLCAI_ADDRESS must be set (run DeployTestWLCAI first).
 contract DeployScript is Script {
-    /// @notice Canonical Lightchain mainnet wrapped native.
-    address internal constant MAINNET_WLCAI = 0xeBf97f16d843bFD9d9E6B1857B4C00d94ca7e2B2;
+    /// @notice Canonical Lightchain wrapped native. Deployed at the same
+    ///         address on mainnet (chainid 9200) and testnet (chainid 8200).
+    address internal constant CANONICAL_WLCAI = 0xeBf97f16d843bFD9d9E6B1857B4C00d94ca7e2B2;
 
     /// @notice Flat 5,000 LCAI per archetype.
     uint256 internal constant TOKEN_PRICE = 5_000 ether;
@@ -97,14 +98,17 @@ contract DeployScript is Script {
         console2.log("HIKARI_LOCKER=%s", address(locker));
     }
 
-    /// @dev Resolve WLCAI: env override wins, else mainnet canonical default.
-    ///      Testnet must set WLCAI_ADDRESS explicitly.
+    /// @dev Env override wins; otherwise default to the canonical address
+    ///      (deployed on both Lightchain mainnet and testnet).
     function _resolveWLCAI() internal view returns (address) {
         try vm.envAddress("WLCAI_ADDRESS") returns (address envWlcai) {
             return envWlcai;
         } catch {
-            require(block.chainid == 9200, "Deploy: set WLCAI_ADDRESS in .env (no canonical default off-mainnet)");
-            return MAINNET_WLCAI;
+            require(
+                block.chainid == 9200 || block.chainid == 8200,
+                "Deploy: unknown chain, set WLCAI_ADDRESS explicitly"
+            );
+            return CANONICAL_WLCAI;
         }
     }
 }
