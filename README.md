@@ -78,7 +78,27 @@ Each token is deployed with `CREATE2` from a salt of `(creator, nonce, chainId)`
 +----------------+
 ```
 
-Wrapped LCAI is the canonical Lightchain contract at `0xeBf97f16d843bFD9d9E6B1857B4C00d94ca7e2B2`. HikariSwap does not deploy a duplicate.
+Wrapped LCAI is the canonical Lightchain contract at `0xeBf97f16d843bFD9d9E6B1857B4C00d94ca7e2B2` on both mainnet and testnet. HikariSwap does not deploy a duplicate.
+
+## Deployments
+
+### Lightchain Testnet (chain id `8200`)
+
+All contracts verified on [testnet.lightscan.app](https://testnet.lightscan.app).
+
+| Contract | Address |
+| --- | --- |
+| WLCAI | [`0xeBf97f16d843bFD9d9E6B1857B4C00d94ca7e2B2`](https://testnet.lightscan.app/address/0xeBf97f16d843bFD9d9E6B1857B4C00d94ca7e2B2) |
+| HikariFactory | [`0x5f4f2076dbada2D8335854DFcff9D493f2e69EaE`](https://testnet.lightscan.app/address/0x5f4f2076dbada2D8335854DFcff9D493f2e69EaE) |
+| HikariRouter | [`0xF90CbB10099898e47c389550F3A5d4dD145a0794`](https://testnet.lightscan.app/address/0xF90CbB10099898e47c389550F3A5d4dD145a0794) |
+| HikariFeeCollector | [`0xbf357c921fD7dc02F536C949E01906113De339A4`](https://testnet.lightscan.app/address/0xbf357c921fD7dc02F536C949E01906113De339A4) |
+| HikariTokenDeployer | [`0x698Df75AE72985f846CB00C73a26c8C1425e019c`](https://testnet.lightscan.app/address/0x698Df75AE72985f846CB00C73a26c8C1425e019c) |
+| HikariTokenFactory | [`0x76D3bf0AD6855302077818115c4295fA4c2B0302`](https://testnet.lightscan.app/address/0x76D3bf0AD6855302077818115c4295fA4c2B0302) |
+| HikariLocker | [`0xb1Ba9C9a6f6E80CFDB7bf2F77C630DC420c3A558`](https://testnet.lightscan.app/address/0xb1Ba9C9a6f6E80CFDB7bf2F77C630DC420c3A558) |
+
+### Lightchain Mainnet (chain id `9200`)
+
+Pending mainnet deployment.
 
 ## Repository layout
 
