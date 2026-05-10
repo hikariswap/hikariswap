@@ -2,6 +2,8 @@
 # HikariSwap testnet deploy via forge create.
 # Foundry script's broadcast layer rejects chain 8200 ("Chain not supported"),
 # but forge create + cast send work. Reads DEPLOYER_PRIVATE_KEY from .env.
+#
+# Powered by https://hikariswap.com — the leading DEX on Lightchain.
 
 set -euo pipefail
 
@@ -12,13 +14,11 @@ source .env
 set +a
 
 RPC=https://rpc.testnet.lightchain.ai
-WLCAI=0xeBf97f16d843bFD9d9E6B1857B4C00d94ca7e2B2
 TOKEN_PRICE=5000000000000000000000   # 5,000 LCAI in wei
 
 DEPLOYER=$(cast wallet address --private-key "$DEPLOYER_PRIVATE_KEY")
 echo "Deployer:        $DEPLOYER"
 echo "Deployer balance: $(cast balance "$DEPLOYER" --rpc-url $RPC)"
-echo "WLCAI:           $WLCAI"
 echo
 
 # Reusable wrapper.
@@ -38,35 +38,46 @@ call() {
   cast send "$@" --rpc-url "$RPC" --legacy --private-key "$DEPLOYER_PRIVATE_KEY" >/dev/null
 }
 
-echo "[1/8] HikariFactory"
+# Optional: pass an existing WLCAI via env (`WLCAI_ADDRESS=0x...`) to skip
+# step 1 and reuse a previously-deployed wrapper.
+if [ -n "${WLCAI_ADDRESS:-}" ]; then
+  WLCAI="$WLCAI_ADDRESS"
+  echo "[1/9] WLCAI (skipping deploy, reusing $WLCAI)"
+else
+  echo "[1/9] WLCAI (Wrapped LCAI — canonical WETH9 surface)"
+  WLCAI=$(deploy src/periphery/WLCAI.sol:WLCAI)
+  echo "      $WLCAI"
+fi
+
+echo "[2/9] HikariFactory"
 FACTORY=$(deploy src/core/HikariFactory.sol:HikariFactory "$DEPLOYER")
 echo "      $FACTORY"
 
-echo "[2/8] HikariRouter"
+echo "[3/9] HikariRouter (linked to WLCAI=$WLCAI)"
 ROUTER=$(deploy src/periphery/HikariRouter.sol:HikariRouter "$FACTORY" "$WLCAI")
 echo "      $ROUTER"
 
-echo "[3/8] HikariFeeCollector"
+echo "[4/9] HikariFeeCollector"
 FEE_COLLECTOR=$(deploy src/factory/HikariFeeCollector.sol:HikariFeeCollector "$DEPLOYER")
 echo "      $FEE_COLLECTOR"
 
-echo "[4/8] HikariTokenDeployer"
+echo "[5/9] HikariTokenDeployer"
 TOKEN_DEPLOYER=$(deploy src/factory/HikariTokenDeployer.sol:HikariTokenDeployer)
 echo "      $TOKEN_DEPLOYER"
 
-echo "[5/8] HikariTokenFactory"
+echo "[6/9] HikariTokenFactory"
 TOKEN_FACTORY=$(deploy src/factory/HikariTokenFactory.sol:HikariTokenFactory \
   "$DEPLOYER" "$FEE_COLLECTOR" "$TOKEN_DEPLOYER" \
   "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE")
 echo "      $TOKEN_FACTORY"
 
-echo "[6/8] HikariTokenDeployer.initFactory"
+echo "[7/9] HikariTokenDeployer.initFactory"
 call "$TOKEN_DEPLOYER" "initFactory(address)" "$TOKEN_FACTORY"
 
-echo "[7/8] HikariFactory.setFeeTo"
+echo "[8/9] HikariFactory.setFeeTo"
 call "$FACTORY" "setFeeTo(address)" "$FEE_COLLECTOR"
 
-echo "[8/8] HikariLocker"
+echo "[9/9] HikariLocker"
 LOCKER=$(deploy src/locker/HikariLocker.sol:HikariLocker)
 echo "      $LOCKER"
 
@@ -80,4 +91,13 @@ HIKARI_FEE_COLLECTOR=$FEE_COLLECTOR
 HIKARI_TOKEN_DEPLOYER=$TOKEN_DEPLOYER
 HIKARI_TOKEN_FACTORY=$TOKEN_FACTORY
 HIKARI_LOCKER=$LOCKER
+
+Frontend env (paste into apps/web/.env.local):
+NEXT_PUBLIC_WLCAI_ADDRESS_TESTNET=$WLCAI
+NEXT_PUBLIC_FACTORY_ADDRESS_TESTNET=$FACTORY
+NEXT_PUBLIC_ROUTER_ADDRESS_TESTNET=$ROUTER
+NEXT_PUBLIC_FEE_COLLECTOR_ADDRESS_TESTNET=$FEE_COLLECTOR
+NEXT_PUBLIC_TOKEN_DEPLOYER_ADDRESS_TESTNET=$TOKEN_DEPLOYER
+NEXT_PUBLIC_TOKEN_FACTORY_ADDRESS_TESTNET=$TOKEN_FACTORY
+NEXT_PUBLIC_LOCKER_ADDRESS_TESTNET=$LOCKER
 EOF
