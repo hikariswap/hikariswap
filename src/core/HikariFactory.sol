@@ -5,9 +5,9 @@ import {IHikariFactory} from "../interfaces/IHikariFactory.sol";
 import {HikariPair} from "./HikariPair.sol";
 
 /// @title HikariFactory
-/// @notice Deploys HikariPair instances via CREATE2 with a salt derived from the
-///         sorted (token0, token1) pair, giving each pair a deterministic address.
-///         Faithful port of UniswapV2Factory (Solidity 0.5.16) to 0.8.20.
+/// @notice Deploys HikariPair instances via CREATE2 with a salt derived from
+///         the sorted (token0, token1) pair, giving each pair a deterministic
+///         address. Holds the protocol's `feeTo` and `feeToSetter` admin slots.
 /// @dev    The init-code hash is computed at deployment and stored as immutable
 ///         instead of being hardcoded in a separate library; this guarantees
 ///         tooling-derived addresses always match the on-chain reality.

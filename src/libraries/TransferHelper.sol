@@ -3,8 +3,8 @@ pragma solidity =0.8.20;
 
 /// @title TransferHelper
 /// @notice Wrappers around ERC20 transfer/approve calls that tolerate
-///         non-standard tokens (returning bytes empty or false). Faithful port
-///         of Uniswap V2 periphery TransferHelper.
+///         non-standard tokens (returning bytes empty or false), plus a
+///         safe native-coin sender for refund and unwrap paths.
 library TransferHelper {
     /// @dev bytes4(keccak256(bytes("approve(address,uint256)")))
     bytes4 private constant SELECTOR_APPROVE = 0x095ea7b3;

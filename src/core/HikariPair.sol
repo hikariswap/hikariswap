@@ -10,12 +10,14 @@ import {Math} from "../libraries/Math.sol";
 import {UQ112x112} from "../libraries/UQ112x112.sol";
 
 /// @title HikariPair
-/// @notice Constant-product AMM pair. Faithful port of Uniswap V2's Pair contract
-///         (Solidity 0.5.16) to 0.8.20. SafeMath is removed in favour of native
-///         checked arithmetic; the TWAP accumulator overflow remains explicitly
-///         `unchecked` because wrap-around is intentional.
-/// @dev    Pairs are deployed by HikariFactory via CREATE2 from the (token0, token1)
-///         pair, where token0 < token1.
+/// @notice Constant-product AMM pair (`x * y = k`) holding two ERC20 reserves
+///         and minting LP shares to liquidity providers. Total swap fee is
+///         0.35% of input: 0.25% accrues to LPs through reserve growth, 0.10%
+///         is captured by `feeTo` via `_mintFee`. The TWAP accumulator
+///         overflow is explicitly `unchecked` because wrap-around is the
+///         intended behaviour of the price oracle.
+/// @dev    Pairs are deployed by HikariFactory via CREATE2 from the
+///         (token0, token1) pair, where token0 < token1.
 contract HikariPair is IHikariPair, HikariLPToken {
     using UQ112x112 for uint224;
 

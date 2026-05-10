@@ -4,11 +4,10 @@ pragma solidity =0.8.20;
 import {IHikariLPToken} from "../interfaces/IHikariLPToken.sol";
 
 /// @title HikariLPToken
-/// @notice Minimal ERC20 + EIP-2612 permit base used by HikariPair as the LP-share
-///         token. Faithful port of UniswapV2ERC20 (Solidity 0.5.16) to 0.8.20.
-///         Logic preserved verbatim; arithmetic relies on 0.8 native overflow
-///         checks instead of SafeMath. The token is deliberately minimal — the
-///         pair contract is the sole minter/burner.
+/// @notice Minimal ERC20 + EIP-2612 permit base used by HikariPair as the
+///         LP-share token. Arithmetic relies on Solidity 0.8 native overflow
+///         checks. The token is deliberately minimal — the pair contract is
+///         the sole minter and burner.
 abstract contract HikariLPToken is IHikariLPToken {
     string public constant name = "HikariSwap LP";
     string public constant symbol = "HKR-LP";

@@ -3,8 +3,7 @@ pragma solidity =0.8.20;
 
 /// @title UQ112x112 fixed-point math
 /// @notice Encodes uint112 numerators into Q112.112 fixed-point uint224 values
-///         used by HikariPair's TWAP price accumulators. Identical semantics to
-///         Uniswap V2's UQ112x112 library.
+///         used by HikariPair's TWAP price accumulators.
 /// @dev    Values have a range of [0, 2**112 - 1] and a resolution of 1 / 2**112.
 library UQ112x112 {
     uint224 internal constant Q112 = 2 ** 112;

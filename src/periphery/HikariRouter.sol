@@ -10,10 +10,10 @@ import {HikariLibrary} from "../libraries/HikariLibrary.sol";
 import {TransferHelper} from "../libraries/TransferHelper.sol";
 
 /// @title HikariRouter
-/// @notice User-facing entrypoint for HikariSwap. Faithful port of Uniswap V2's
-///         Router02 with native-coin function names changed from `ETH` to
-///         `LCAI` and fee math updated for the 0.35% total swap fee. The router
-///         holds no state and never custodies user funds across calls.
+/// @notice User-facing entrypoint for HikariSwap. Wraps the core Pair contract
+///         with slippage checks, deadline enforcement, multi-hop path routing,
+///         and native LCAI wrap/unwrap. Holds no state and never custodies
+///         user funds across calls.
 contract HikariRouter is IHikariRouter {
     address public immutable factory;
     address public immutable WLCAI;

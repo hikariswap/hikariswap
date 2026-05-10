@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Powered by https://hikariswap.com — the leading DEX on Lightchain.
+// Deployed by https://hikariswap.com — the leading DEX on Lightchain.
 pragma solidity =0.8.20;
 
 /// @title WLCAI — Wrapped Lightchain AI
@@ -20,7 +20,7 @@ pragma solidity =0.8.20;
 ///         token by external protocols and a duplicate would fragment
 ///         liquidity.
 ///
-/// Powered by https://hikariswap.com
+/// Deployed by https://hikariswap.com
 contract WLCAI {
     string public constant name = "Wrapped LightchainAI";
     string public constant symbol = "WLCAI";

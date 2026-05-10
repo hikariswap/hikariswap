@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# Verify deployed HikariSwap contracts on testnet.lightscan.app (Blockscout).
+# Verify deployed HikariSwap contracts on lightscan.app (Blockscout, mainnet).
 
 set -euo pipefail
 
-VERIFIER_URL=https://testnet.lightscan.app/api/
-CHAIN=8200
+VERIFIER_URL=https://lightscan.app/api/
+CHAIN=9200
 
 DEPLOYER=0xD6C0f5a2361CF061A7fbD336616c2eBA7973D9C9
-WLCAI=0x4E31781fa4d3A7970B01d6b2C4357fDa6B6fE243
-FACTORY=0xc9EbC8b387A56e4C44bFA89970A8cf5443b6F25C
-ROUTER=0x9B5eeF08A6D7d796Dba00180935420c62D62D987
-FEE_COLLECTOR=0x963040293C67b4A53E66E772ab9C11D71cdD84B1
-TOKEN_DEPLOYER=0xdB902d4ba61b9607266f7AAB1ef27FC890a3B4ED
-TOKEN_FACTORY=0xA6fD5fE0E655b7DF4435232C961Bf8Bd3B2fF690
-LOCKER=0x66e6878EAB57256336C6A87c4C322625aE9FCDe6
+WLCAI=0xeBf97f16d843bFD9d9E6B1857B4C00d94ca7e2B2
+FACTORY=0x5f4f2076dbada2D8335854DFcff9D493f2e69EaE
+ROUTER=0xF90CbB10099898e47c389550F3A5d4dD145a0794
+FEE_COLLECTOR=0xbf357c921fD7dc02F536C949E01906113De339A4
+TOKEN_DEPLOYER=0x698Df75AE72985f846CB00C73a26c8C1425e019c
+TOKEN_FACTORY=0x76D3bf0AD6855302077818115c4295fA4c2B0302
+LOCKER=0xb1Ba9C9a6f6E80CFDB7bf2F77C630DC420c3A558
 
 TOKEN_PRICE=5000000000000000000000
 
@@ -26,31 +26,28 @@ verify() {
   "${cmd[@]}"
 }
 
-echo "[1/7] WLCAI"
-verify "$WLCAI" "src/periphery/WLCAI.sol:WLCAI"
-
-echo "[2/7] HikariFactory"
+echo "[1/6] HikariFactory"
 verify "$FACTORY" "src/core/HikariFactory.sol:HikariFactory" \
   "$(cast abi-encode "constructor(address)" "$DEPLOYER")"
 
-echo "[3/7] HikariRouter"
+echo "[2/6] HikariRouter"
 verify "$ROUTER" "src/periphery/HikariRouter.sol:HikariRouter" \
   "$(cast abi-encode "constructor(address,address)" "$FACTORY" "$WLCAI")"
 
-echo "[4/7] HikariFeeCollector"
+echo "[3/6] HikariFeeCollector"
 verify "$FEE_COLLECTOR" "src/factory/HikariFeeCollector.sol:HikariFeeCollector" \
   "$(cast abi-encode "constructor(address)" "$DEPLOYER")"
 
-echo "[5/7] HikariTokenDeployer"
+echo "[4/6] HikariTokenDeployer"
 verify "$TOKEN_DEPLOYER" "src/factory/HikariTokenDeployer.sol:HikariTokenDeployer"
 
-echo "[6/7] HikariTokenFactory"
+echo "[5/6] HikariTokenFactory"
 verify "$TOKEN_FACTORY" "src/factory/HikariTokenFactory.sol:HikariTokenFactory" \
   "$(cast abi-encode "constructor(address,address,address,uint256,uint256,uint256,uint256)" \
     "$DEPLOYER" "$FEE_COLLECTOR" "$TOKEN_DEPLOYER" \
     "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE")"
 
-echo "[7/7] HikariLocker"
+echo "[6/6] HikariLocker"
 verify "$LOCKER" "src/locker/HikariLocker.sol:HikariLocker"
 
 echo

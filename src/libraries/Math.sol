@@ -2,8 +2,8 @@
 pragma solidity =0.8.20;
 
 /// @title Math
-/// @notice Lightweight math helpers used by HikariPair. Identical semantics to
-///         Uniswap V2's Math library.
+/// @notice Lightweight math helpers used by HikariPair: integer min and a
+///         Babylonian-method integer square root.
 library Math {
     function min(uint256 x, uint256 y) internal pure returns (uint256 z) {
         z = x < y ? x : y;
