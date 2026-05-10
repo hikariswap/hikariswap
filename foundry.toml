@@ -46,6 +46,8 @@ number_underscore = "thousands"
 
 [rpc_endpoints]
 lightchain = "https://rpc.mainnet.lightchain.ai"
+lightchain_testnet = "https://rpc.testnet.lightchain.ai"
 
 [etherscan]
 lightchain = { key = "${LIGHTSCAN_API_KEY}", url = "https://lightscan.app/api", chain = 9200 }
+lightchain_testnet = { key = "${LIGHTSCAN_API_KEY}", url = "https://testnet.lightscan.app/api", chain = 8200 }

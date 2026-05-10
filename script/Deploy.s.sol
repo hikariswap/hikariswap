@@ -1,0 +1,110 @@
+// SPDX-License-Identifier: MIT
+pragma solidity =0.8.20;
+
+import {Script, console2} from "forge-std/Script.sol";
+
+import {HikariFactory} from "../src/core/HikariFactory.sol";
+import {HikariRouter} from "../src/periphery/HikariRouter.sol";
+import {HikariFeeCollector} from "../src/factory/HikariFeeCollector.sol";
+import {HikariTokenDeployer} from "../src/factory/HikariTokenDeployer.sol";
+import {HikariTokenFactory} from "../src/factory/HikariTokenFactory.sol";
+import {HikariLocker} from "../src/locker/HikariLocker.sol";
+
+/// @title Deploy
+/// @notice Full deployment of HikariSwap. Runs the entire bring-up sequence in
+///         one transaction batch: 8 contracts + 2 wiring calls. Reads the
+///         deployer key and (optionally) the WLCAI address from environment.
+///         For mainnet, WLCAI defaults to the canonical Lightchain address; on
+///         testnet, WLCAI_ADDRESS must be set (run DeployTestWLCAI first).
+contract DeployScript is Script {
+    /// @notice Canonical Lightchain mainnet wrapped native.
+    address internal constant MAINNET_WLCAI = 0xeBf97f16d843bFD9d9E6B1857B4C00d94ca7e2B2;
+
+    /// @notice Flat 5,000 LCAI per archetype.
+    uint256 internal constant TOKEN_PRICE = 5_000 ether;
+
+    function run() external {
+        uint256 deployerPk = vm.envUint("DEPLOYER_PRIVATE_KEY");
+        address deployer = vm.addr(deployerPk);
+        address wlcai = _resolveWLCAI();
+
+        require(wlcai != address(0), "Deploy: WLCAI address resolved to zero");
+        require(wlcai.code.length > 0, "Deploy: WLCAI has no code at given address");
+
+        console2.log("");
+        console2.log("=== HIKARISWAP DEPLOYMENT ===");
+        console2.log("Chain ID:        ", block.chainid);
+        console2.log("Deployer:        ", deployer);
+        console2.log("Deployer balance:", deployer.balance);
+        console2.log("WLCAI:           ", wlcai);
+        console2.log("Token price:     ", TOKEN_PRICE / 1 ether, "LCAI per archetype");
+        console2.log("");
+
+        require(deployer.balance > 0.1 ether, "Deploy: deployer balance below 0.1 LCAI");
+
+        vm.startBroadcast(deployerPk);
+
+        HikariFactory factory = new HikariFactory(deployer);
+        console2.log("HikariFactory       ", address(factory));
+
+        HikariRouter router = new HikariRouter(address(factory), wlcai);
+        console2.log("HikariRouter        ", address(router));
+
+        HikariFeeCollector feeCollector = new HikariFeeCollector(deployer);
+        console2.log("HikariFeeCollector  ", address(feeCollector));
+
+        HikariTokenDeployer tokenDeployer = new HikariTokenDeployer();
+        console2.log("HikariTokenDeployer ", address(tokenDeployer));
+
+        HikariTokenFactory tokenFactory = new HikariTokenFactory(
+            deployer,
+            payable(address(feeCollector)),
+            address(tokenDeployer),
+            TOKEN_PRICE,
+            TOKEN_PRICE,
+            TOKEN_PRICE,
+            TOKEN_PRICE
+        );
+        console2.log("HikariTokenFactory  ", address(tokenFactory));
+
+        // Permission-bind deployer to factory (one-shot).
+        tokenDeployer.initFactory(address(tokenFactory));
+
+        // Wire V2 protocol fees into the FeeCollector treasury.
+        factory.setFeeTo(address(feeCollector));
+
+        HikariLocker locker = new HikariLocker();
+        console2.log("HikariLocker        ", address(locker));
+
+        vm.stopBroadcast();
+
+        // Post-deploy assertions: anything wrong here means we revert before
+        // the user thinks the deploy succeeded.
+        require(address(factory.feeTo()) == address(feeCollector), "feeTo mismatch");
+        require(address(tokenDeployer.factory()) == address(tokenFactory), "deployer not bound");
+        require(tokenFactory.price(HikariTokenFactory.TokenType.Standard) == TOKEN_PRICE, "price mismatch");
+
+        console2.log("");
+        console2.log("=== DEPLOYMENT COMPLETE ===");
+        console2.log("Save these addresses to .env and the README:");
+        console2.log("");
+        console2.log("WLCAI_ADDRESS=%s", wlcai);
+        console2.log("HIKARI_FACTORY=%s", address(factory));
+        console2.log("HIKARI_ROUTER=%s", address(router));
+        console2.log("HIKARI_FEE_COLLECTOR=%s", address(feeCollector));
+        console2.log("HIKARI_TOKEN_DEPLOYER=%s", address(tokenDeployer));
+        console2.log("HIKARI_TOKEN_FACTORY=%s", address(tokenFactory));
+        console2.log("HIKARI_LOCKER=%s", address(locker));
+    }
+
+    /// @dev Resolve WLCAI: env override wins, else mainnet canonical default.
+    ///      Testnet must set WLCAI_ADDRESS explicitly.
+    function _resolveWLCAI() internal view returns (address) {
+        try vm.envAddress("WLCAI_ADDRESS") returns (address envWlcai) {
+            return envWlcai;
+        } catch {
+            require(block.chainid == 9200, "Deploy: set WLCAI_ADDRESS in .env (no canonical default off-mainnet)");
+            return MAINNET_WLCAI;
+        }
+    }
+}
