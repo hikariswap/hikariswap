@@ -32,7 +32,14 @@ contract HikariTokenFactoryTest is Base {
         HikariTokenDeployer d = new HikariTokenDeployer();
         vm.expectRevert(abi.encodeWithSelector(HikariTokenFactory.InvalidPrice.selector, uint256(999 ether)));
         new HikariTokenFactory(
-            owner, payable(address(feeCollector)), address(d), 999 ether, PRICE_MINTABLE, PRICE_BURNABLE, PRICE_TAX
+            owner,
+            payable(address(feeCollector)),
+            address(d),
+            MIN_PRICE,
+            999 ether,
+            PRICE_MINTABLE,
+            PRICE_BURNABLE,
+            PRICE_TAX
         );
     }
 

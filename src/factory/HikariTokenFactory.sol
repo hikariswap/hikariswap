@@ -31,8 +31,10 @@ contract HikariTokenFactory is Ownable2Step, ReentrancyGuard {
 
     /// @notice Hard bounds on the per-archetype creation price. Cannot be
     ///         exceeded by setPrice — the protocol's commitment that pricing
-    ///         stays sane even under owner-key compromise.
-    uint256 public constant MIN_PRICE = 1000 ether; // 1,000 LCAI
+    ///         stays sane even under owner-key compromise. `MIN_PRICE` is
+    ///         set at deployment and immutable thereafter: mainnet deploys
+    ///         at 1,000 LCAI, testnet at 0 to allow free experimentation.
+    uint256 public immutable MIN_PRICE;
     uint256 public constant MAX_PRICE = 50_000 ether; // 50,000 LCAI
 
     /// @notice Maximum decimals accepted at creation. ERC20 spec permits 0-255
@@ -88,6 +90,7 @@ contract HikariTokenFactory is Ownable2Step, ReentrancyGuard {
         address owner_,
         address payable feeCollector_,
         address deployer_,
+        uint256 minPrice_,
         uint256 standardPrice,
         uint256 mintablePrice,
         uint256 burnablePrice,
@@ -95,8 +98,10 @@ contract HikariTokenFactory is Ownable2Step, ReentrancyGuard {
     ) Ownable(owner_) {
         // Ownable(owner_) rejects address(0); only the other params need checking.
         if (feeCollector_ == address(0) || deployer_ == address(0)) revert ZeroAddress();
+        if (minPrice_ > MAX_PRICE) revert InvalidPrice(minPrice_);
         deployer = HikariTokenDeployer(deployer_);
         feeCollector = feeCollector_;
+        MIN_PRICE = minPrice_;
 
         _setPrice(TokenType.Standard, standardPrice);
         _setPrice(TokenType.Mintable, mintablePrice);

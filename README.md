@@ -106,8 +106,8 @@ All contracts verified on [testnet.lightscan.app](https://testnet.lightscan.app)
 | HikariFactory | [`0xc9EbC8b387A56e4C44bFA89970A8cf5443b6F25C`](https://testnet.lightscan.app/address/0xc9EbC8b387A56e4C44bFA89970A8cf5443b6F25C) |
 | HikariRouter | [`0x9B5eeF08A6D7d796Dba00180935420c62D62D987`](https://testnet.lightscan.app/address/0x9B5eeF08A6D7d796Dba00180935420c62D62D987) |
 | HikariFeeCollector | [`0x963040293C67b4A53E66E772ab9C11D71cdD84B1`](https://testnet.lightscan.app/address/0x963040293C67b4A53E66E772ab9C11D71cdD84B1) |
-| HikariTokenDeployer | [`0xdB902d4ba61b9607266f7AAB1ef27FC890a3B4ED`](https://testnet.lightscan.app/address/0xdB902d4ba61b9607266f7AAB1ef27FC890a3B4ED) |
-| HikariTokenFactory | [`0xA6fD5fE0E655b7DF4435232C961Bf8Bd3B2fF690`](https://testnet.lightscan.app/address/0xA6fD5fE0E655b7DF4435232C961Bf8Bd3B2fF690) |
+| HikariTokenDeployer | [`0x7cF3c8Bf167dCFDd49E397aA27476470556A8b4a`](https://testnet.lightscan.app/address/0x7cF3c8Bf167dCFDd49E397aA27476470556A8b4a) |
+| HikariTokenFactory | [`0x0f4fFFd5864e41dB5f3aa8132e372e379FFe5f96`](https://testnet.lightscan.app/address/0x0f4fFFd5864e41dB5f3aa8132e372e379FFe5f96) |
 | HikariLocker | [`0x66e6878EAB57256336C6A87c4C322625aE9FCDe6`](https://testnet.lightscan.app/address/0x66e6878EAB57256336C6A87c4C322625aE9FCDe6) |
 
 ## Repository layout

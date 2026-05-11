@@ -11,11 +11,12 @@ WLCAI=0x4E31781fa4d3A7970B01d6b2C4357fDa6B6fE243
 FACTORY=0xc9EbC8b387A56e4C44bFA89970A8cf5443b6F25C
 ROUTER=0x9B5eeF08A6D7d796Dba00180935420c62D62D987
 FEE_COLLECTOR=0x963040293C67b4A53E66E772ab9C11D71cdD84B1
-TOKEN_DEPLOYER=0xdB902d4ba61b9607266f7AAB1ef27FC890a3B4ED
-TOKEN_FACTORY=0xA6fD5fE0E655b7DF4435232C961Bf8Bd3B2fF690
+TOKEN_DEPLOYER=0x7cF3c8Bf167dCFDd49E397aA27476470556A8b4a
+TOKEN_FACTORY=0x0f4fFFd5864e41dB5f3aa8132e372e379FFe5f96
 LOCKER=0x66e6878EAB57256336C6A87c4C322625aE9FCDe6
 
-TOKEN_PRICE=5000000000000000000000
+MIN_PRICE=0
+TOKEN_PRICE=0
 
 verify() {
   local addr="$1" path="$2" args="${3-}"
@@ -46,9 +47,9 @@ verify "$TOKEN_DEPLOYER" "src/factory/HikariTokenDeployer.sol:HikariTokenDeploye
 
 echo "[6/7] HikariTokenFactory"
 verify "$TOKEN_FACTORY" "src/factory/HikariTokenFactory.sol:HikariTokenFactory" \
-  "$(cast abi-encode "constructor(address,address,address,uint256,uint256,uint256,uint256)" \
+  "$(cast abi-encode "constructor(address,address,address,uint256,uint256,uint256,uint256,uint256)" \
     "$DEPLOYER" "$FEE_COLLECTOR" "$TOKEN_DEPLOYER" \
-    "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE")"
+    "$MIN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE")"
 
 echo "[7/7] HikariLocker"
 verify "$LOCKER" "src/locker/HikariLocker.sol:HikariLocker"

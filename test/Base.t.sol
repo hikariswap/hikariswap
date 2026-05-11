@@ -30,6 +30,7 @@ contract Base is Test {
     MockWLCAI internal wlcai;
 
     // Default token-creation prices (matches mainnet config: flat 5,000 LCAI).
+    uint256 internal constant MIN_PRICE = 1000 ether;
     uint256 internal constant PRICE_STANDARD = 5000 ether;
     uint256 internal constant PRICE_MINTABLE = 5000 ether;
     uint256 internal constant PRICE_BURNABLE = 5000 ether;
@@ -47,6 +48,7 @@ contract Base is Test {
             owner,
             payable(address(feeCollector)),
             address(tokenDeployer),
+            MIN_PRICE,
             PRICE_STANDARD,
             PRICE_MINTABLE,
             PRICE_BURNABLE,

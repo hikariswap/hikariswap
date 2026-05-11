@@ -12,7 +12,8 @@ set +a
 
 RPC=https://rpc.mainnet.lightchain.ai
 WLCAI=0xeBf97f16d843bFD9d9E6B1857B4C00d94ca7e2B2
-TOKEN_PRICE=5000000000000000000000   # 5,000 LCAI in wei
+MIN_PRICE=1000000000000000000000     # 1,000 LCAI: audited mainnet floor
+TOKEN_PRICE=5000000000000000000000   # 5,000 LCAI per archetype
 
 DEPLOYER=$(cast wallet address --private-key "$DEPLOYER_PRIVATE_KEY")
 CHAIN_ID=$(cast chain-id --rpc-url "$RPC")
@@ -70,7 +71,7 @@ echo "      $TOKEN_DEPLOYER"
 echo "[5/8] HikariTokenFactory"
 TOKEN_FACTORY=$(deploy src/factory/HikariTokenFactory.sol:HikariTokenFactory \
   "$DEPLOYER" "$FEE_COLLECTOR" "$TOKEN_DEPLOYER" \
-  "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE")
+  "$MIN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE")
 echo "      $TOKEN_FACTORY"
 
 echo "[6/8] HikariTokenDeployer.initFactory"

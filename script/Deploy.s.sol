@@ -24,6 +24,12 @@ contract DeployScript is Script {
     /// @notice Flat 5,000 LCAI per archetype.
     uint256 internal constant TOKEN_PRICE = 5_000 ether;
 
+    /// @notice Per-chain MIN_PRICE floor. Mainnet enforces the audited 1,000
+    ///         LCAI minimum; testnet allows free creation for end-to-end
+    ///         frontend testing.
+    uint256 internal constant MAINNET_MIN_PRICE = 1_000 ether;
+    uint256 internal constant TESTNET_MIN_PRICE = 0;
+
     function run() external {
         uint256 deployerPk = vm.envUint("DEPLOYER_PRIVATE_KEY");
         address deployer = vm.addr(deployerPk);
@@ -57,14 +63,17 @@ contract DeployScript is Script {
         HikariTokenDeployer tokenDeployer = new HikariTokenDeployer();
         console2.log("HikariTokenDeployer ", address(tokenDeployer));
 
+        uint256 minPrice = block.chainid == 9200 ? MAINNET_MIN_PRICE : TESTNET_MIN_PRICE;
+        uint256 standardPrice = block.chainid == 9200 ? TOKEN_PRICE : 0;
         HikariTokenFactory tokenFactory = new HikariTokenFactory(
             deployer,
             payable(address(feeCollector)),
             address(tokenDeployer),
-            TOKEN_PRICE,
-            TOKEN_PRICE,
-            TOKEN_PRICE,
-            TOKEN_PRICE
+            minPrice,
+            standardPrice,
+            standardPrice,
+            standardPrice,
+            standardPrice
         );
         console2.log("HikariTokenFactory  ", address(tokenFactory));
 

@@ -14,7 +14,8 @@ source .env
 set +a
 
 RPC=https://rpc.testnet.lightchain.ai
-TOKEN_PRICE=5000000000000000000000   # 5,000 LCAI in wei
+MIN_PRICE=0                          # testnet floor: free creation
+TOKEN_PRICE=0                        # testnet pricing: free for every archetype
 
 DEPLOYER=$(cast wallet address --private-key "$DEPLOYER_PRIVATE_KEY")
 echo "Deployer:        $DEPLOYER"
@@ -68,7 +69,7 @@ echo "      $TOKEN_DEPLOYER"
 echo "[6/9] HikariTokenFactory"
 TOKEN_FACTORY=$(deploy src/factory/HikariTokenFactory.sol:HikariTokenFactory \
   "$DEPLOYER" "$FEE_COLLECTOR" "$TOKEN_DEPLOYER" \
-  "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE")
+  "$MIN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE" "$TOKEN_PRICE")
 echo "      $TOKEN_FACTORY"
 
 echo "[7/9] HikariTokenDeployer.initFactory"
